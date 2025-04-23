@@ -150,4 +150,4 @@ if st.button("Start Processing"):
                     st.error(f"Season ❌ - {e}")
                     errors += 1
         else:
-            st.error("Failed to associate episode with podcast provider.")
+            st.error("Something went wrong and I don't know what... Could you please check the File ID?")

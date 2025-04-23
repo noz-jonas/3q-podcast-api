@@ -3,14 +3,19 @@ import streamlit as st
 import requests
 import toml
 
-# Load secrets (project id and API key)
-project_id = st.secrets["project_id"]
-api_key = st.secrets["api_key"]
-podcast_id = st.secrets["podcast_id"]
-
 # Streamlit UI
 st.title("Podcast Management")
 
+use_staging = st.toggle("Use staging environment", value=False)
+
+env = "staging" if use_staging else "live"
+project_id = st.secrets[f"{env}_project_id"]
+api_key = st.secrets[f"{env}_api_key"]
+podcast_id = st.secrets[f"{env}_podcast_id"]
+season_id = st.secrets[f"{env}_season_id"]
+
+st.subheader("3Q Episode Configuration")
+st.divider()
 file_id = st.text_input("Enter File ID")
 
 if st.button("Start Processing"):
@@ -130,7 +135,7 @@ if st.button("Start Processing"):
                         "podcast_episode[Keywords]": "",
                         "podcast_episode[EpisodeType]": "full",
                         "podcast_episode[FeedGuid]": "",
-                        "podcast_episode[PodcastSeasons]": st.secrets["season_id"]
+                        "podcast_episode[PodcastSeasons]": season_id
                     }
                     headers_season = {
                         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -151,6 +156,8 @@ if st.button("Start Processing"):
                     errors += 1
 
             # 4.1 Ask for article ID
+            st.subheader("Podcast Cover from Article")
+            st.divider()
             article_id = st.text_input("Please enter the article ID of the focus topic")
 
             if article_id:

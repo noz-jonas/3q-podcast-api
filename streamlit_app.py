@@ -143,6 +143,7 @@ if st.button("Start Processing"):
                         "Referer": f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode",
                         "X-Requested-With": "XMLHttpRequest"
                     }
+                    st.caption(f"POST to: https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/{file_id}/edit with season ID {season_id}")
                     response_season = requests.post(
                         f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/{file_id}/edit",
                         headers=headers_season,
@@ -153,6 +154,7 @@ if st.button("Start Processing"):
                     st.success("Season ✅")
                 except requests.exceptions.RequestException as e:
                     st.error(f"Season ❌ - {e}")
+                    st.text(f"Raw response: {response_season.text if 'response_season' in locals() else 'No response'}")
                     errors += 1
 
             # 4.1 Ask for article ID
@@ -160,7 +162,7 @@ if st.button("Start Processing"):
             st.divider()
             article_id = st.text_input("Please enter the article ID of the focus topic")
 
-            if article_id:
+            if article_id and st.button("Set podcast cover using article ID"):
                 # 4.2 Retrieve image URL from article ID
                 image_api_url = f"https://www.shz.de/imageurl/{article_id}/crop/cvirtual.center-w1080-h1080?dsimgaccess={st.secrets['imgaccess_token']}&imageGeneratorClientIdToken={st.secrets['image_clientId_token']}"
                 try:

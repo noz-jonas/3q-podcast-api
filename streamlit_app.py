@@ -90,20 +90,20 @@ if st.button("Start Processing"):
                     errors += 1
 
                 # 3.4 Set Podcast Cover
-                # image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/cae358de-89ff-4067-aee6-e79613779d74.jpg"
-                # try:
-                #     img_data_cover = requests.get(image_url_cover).content
-                #
-                #     response_image_cover = requests.post(
-                #         f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/pictures",
-                #         headers={"X-AUTH-APIKEY": api_key, "Content-type": "image/jpeg"},
-                #         data=img_data_cover
-                #     )
-                #     response_image_cover.raise_for_status()
-                #     st.success("Podcast Cover Image ✅")
-                # except requests.exceptions.RequestException as e:
-                #     st.error(f"Podcast Cover Image ❌ - {e}")
-                #     errors += 1
+                image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/cae358de-89ff-4067-aee6-e79613779d74.jpg"
+                try:
+                    img_data_cover = requests.get(image_url_cover).content
+
+                    response_image_cover = requests.post(
+                        f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/pictures",
+                        headers={"X-AUTH-APIKEY": api_key, "Content-type": "image/jpeg"},
+                        data=img_data_cover
+                    )
+                    response_image_cover.raise_for_status()
+                    st.success("Podcast Cover Image ✅")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Podcast Cover Image ❌ - {e}")
+                    errors += 1
 
                 # 3.5 Set Body Text
                 body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"

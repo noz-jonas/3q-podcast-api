@@ -6,6 +6,7 @@ import toml
 # Load secrets (project id and API key)
 project_id = st.secrets["project_id"]
 api_key = st.secrets["api_key"]
+podcast_id = st.secrets["podcast_id"]
 
 # Streamlit UI
 st.title("Podcast Metadata Management")
@@ -17,7 +18,18 @@ if st.button("Start Processing"):
         st.error("Please provide a File ID.")
     else:
         # TODO: Securely handle authentication cookie
-        podcast_response = requests.get(f"https://podcastprovider.api/episodes/{file_id}", cookies={'auth': st.secrets["auth_cookie"]})
+        podcast_url = f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/addnew"
+        payload = {'fileIds[]': file_id}
+        headers_podcast = {
+            'Accept': '*/*',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Origin': 'https://sdn.3qsdn.com',
+            'Referer': f'https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+        cookies_podcast = {'sdnSessionRemember': st.secrets["sdnSessionRemember"]}
+
+        podcast_response = requests.post(podcast_url, headers=headers_podcast, cookies=cookies_podcast, data=payload)
 
         if podcast_response.status_code == 401:
             st.error("Authorization failed. Please log in to the Podcast Provider.")

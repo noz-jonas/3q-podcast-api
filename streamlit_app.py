@@ -9,7 +9,7 @@ api_key = st.secrets["api_key"]
 podcast_id = st.secrets["podcast_id"]
 
 # Streamlit UI
-st.title("Podcast Metadata Management")
+st.title("Podcast Management")
 
 file_id = st.text_input("Enter File ID")
 
@@ -32,9 +32,9 @@ if st.button("Start Processing"):
         podcast_response = requests.post(podcast_url, headers=headers_podcast, cookies=cookies_podcast, data=payload)
 
         if podcast_response.status_code == 401:
-            st.error("Authorization failed. Please log in to the Podcast Provider.")
+            st.error("Authorization failed. Please ask the product manager and tell them to 'log in to the Podcast Provider'.")
         elif podcast_response.ok:
-            st.success("Podcast Provider Check ✅")
+            st.success("Episode added to Podcast ✅")
 
             headers = {
                 "X-AUTH-APIKEY": api_key,

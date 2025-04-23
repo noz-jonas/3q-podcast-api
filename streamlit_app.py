@@ -121,5 +121,33 @@ if st.button("Start Processing"):
 
                 if errors >= 2:
                     st.error("Something went wrong. Please check the fileId or ask the product manager.")
+                # 3.6 Set Season for Episode
+                try:
+                    season_payload = {
+                        "_method": "PATCH",
+                        "podcast_episode[Permalink]": "",
+                        "podcast_episode[Author]": "",
+                        "podcast_episode[Keywords]": "",
+                        "podcast_episode[EpisodeType]": "full",
+                        "podcast_episode[FeedGuid]": "",
+                        "podcast_episode[PodcastSeasons]": st.secrets["season_id"]
+                    }
+                    headers_season = {
+                        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                        "Origin": "https://sdn.3qsdn.com",
+                        "Referer": f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode",
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                    response_season = requests.post(
+                        f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/{file_id}/edit",
+                        headers=headers_season,
+                        cookies={"sdnSessionRemember": st.secrets["sdnSessionRemember"]},
+                        data=season_payload
+                    )
+                    response_season.raise_for_status()
+                    st.success("Season ✅")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Season ❌ - {e}")
+                    errors += 1
         else:
             st.error("Failed to associate episode with podcast provider.")

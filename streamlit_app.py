@@ -85,20 +85,20 @@ if st.button("Start Processing"):
                     errors += 1
 
                 # 3.4 Set Podcast Cover
-                image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/cae358de-89ff-4067-aee6-e79613779d74.jpg"
-                try:
-                    img_data_cover = requests.get(image_url_cover).content
-
-                    response_image_cover = requests.post(
-                        f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/pictures",
-                        headers={"X-AUTH-APIKEY": api_key, "Content-type": "image/jpeg"},
-                        data=img_data_cover
-                    )
-                    response_image_cover.raise_for_status()
-                    st.success("Podcast Cover Image ✅")
-                except requests.exceptions.RequestException as e:
-                    st.error(f"Podcast Cover Image ❌ - {e}")
-                    errors += 1
+                # image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/cae358de-89ff-4067-aee6-e79613779d74.jpg"
+                # try:
+                #     img_data_cover = requests.get(image_url_cover).content
+                #
+                #     response_image_cover = requests.post(
+                #         f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/pictures",
+                #         headers={"X-AUTH-APIKEY": api_key, "Content-type": "image/jpeg"},
+                #         data=img_data_cover
+                #     )
+                #     response_image_cover.raise_for_status()
+                #     st.success("Podcast Cover Image ✅")
+                # except requests.exceptions.RequestException as e:
+                #     st.error(f"Podcast Cover Image ❌ - {e}")
+                #     errors += 1
 
                 # 3.5 Set Body Text
                 body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"
@@ -134,7 +134,7 @@ if st.button("Start Processing"):
                     }
                     headers_season = {
                         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                        "Origin": "https://sdn.3qsdn.com",
+                        "Origin": "https://sdn.3qsdn.com",  
                         "Referer": f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode",
                         "X-Requested-With": "XMLHttpRequest"
                     }
@@ -149,5 +149,31 @@ if st.button("Start Processing"):
                 except requests.exceptions.RequestException as e:
                     st.error(f"Season ❌ - {e}")
                     errors += 1
+
+            # 4.1 Ask for article ID
+            article_id = st.text_input("Please enter the article ID of the focus topic")
+
+            if article_id:
+                # 4.2 Retrieve image URL from article ID
+                image_api_url = f"https://www.shz.de/imageurl/{article_id}/crop/cvirtual.center-w1080-h1080?dsimgaccess={st.secrets['imgaccess_token']}&imageGeneratorClientIdToken={st.secrets['image_clientId_token']}"
+                try:
+                    image_response = requests.get(image_api_url)
+                    image_response.raise_for_status()
+                    image_url_cover = image_response.json().get("url")
+                    
+                    if image_url_cover:
+                        # 4.3 Set Podcast Cover using new URL
+                        img_data_cover = requests.get(image_url_cover).content
+                        response_image_cover = requests.post(
+                            f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/pictures",
+                            headers={"X-AUTH-APIKEY": api_key, "Content-type": "image/jpeg"},
+                            data=img_data_cover
+                        )
+                        response_image_cover.raise_for_status()
+                        st.success("Podcast Cover from article ✅")
+                    else:
+                        st.error("No URL found in image API response.")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Podcast Cover from article ❌ - {e}")
         else:
             st.error("Something went wrong and I don't know what... Could you please check the File ID?")

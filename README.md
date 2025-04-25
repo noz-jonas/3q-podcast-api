@@ -12,6 +12,7 @@ This Streamlit app helps editors and producers easily assign podcast metadata us
   - Videotype
   - Category
   - Vertical image
+  - Subtitle
   - Body text
   - Podcast season (via cookie-authenticated POST)
 - Default podcast cover image (Step 3.4)

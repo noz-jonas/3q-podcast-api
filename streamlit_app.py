@@ -6,7 +6,7 @@ import toml
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.6")
+st.caption("v1.7")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -111,6 +111,7 @@ if st.button("Start Processing"):
                     # 3.5 Set Body Text
                     body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"
                     body_payload = {
+                        "Metadata_DisplayTitleSecondLine": "Fokus Schleswig-Holstein",
                         "cf_Body": """
                         <h1>Du hast Feedback zum neuen Format?</h1>
                         <p>Dann&nbsp;<strong>schreib uns gerne eine E-Mail</strong>&nbsp;an&nbsp;

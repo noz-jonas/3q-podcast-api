@@ -15,7 +15,6 @@ api_key = st.secrets[f"{env}_api_key"]
 podcast_id = st.secrets[f"{env}_podcast_id"]
 season_id = st.secrets[f"{env}_season_id"]
 
-st.subheader("3Q Episode Configuration")
 st.divider()
 file_id = st.text_input("Enter File ID").strip()
 article_id = st.text_input("Enter the article ID of the focus topic").strip()

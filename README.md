@@ -14,7 +14,7 @@ This Streamlit app helps editors and producers easily assign podcast metadata us
   - Vertical image
   - Subtitle
   - Body text
-  - Podcast season (via cookie-authenticated POST)
+  # Podcast season (via cookie-authenticated POST) -- removed, as setting season is deactivated
 - Default podcast cover image (Step 3.4)
 - 🆕 Fetch and upload cover image dynamically from `articleId` (Step 4)
 - Error messages with detailed debugging in staging mode
@@ -82,7 +82,8 @@ Then open `http://localhost:8501` in your browser.
    - Uploads vertical image and body text
    - Sets the podcast season
    - Uses a default cover image
-   - Optionally replaces the cover with an article-based image (if found)
+  - Optionally replaces the cover with an article-based image (if found)
+  - Final success message when processing is complete
 
 ---
 

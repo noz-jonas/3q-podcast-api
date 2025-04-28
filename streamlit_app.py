@@ -6,7 +6,7 @@ import toml
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.7")
+st.caption("v1.8")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -131,37 +131,37 @@ if st.button("Start Processing"):
                     if errors >= 2:
                         st.error("Something went wrong. Please check the fileId or ask the product manager.")
                     # 3.6 Set Season for Episode
-                    try:
-                        season_payload = {
-                            "_method": "PATCH",
-                            "podcast_episode[Permalink]": "",
-                            "podcast_episode[Author]": "",
-                            "podcast_episode[Keywords]": "",
-                            "podcast_episode[EpisodeType]": "full",
-                            "podcast_episode[FeedGuid]": "",
-                            "podcast_episode[PodcastSeasons]": season_id
-                        }
-                        headers_season = {
-                            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                            "Origin": "https://sdn.3qsdn.com",  
-                            "Referer": f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode",
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                        if use_staging:
-                            st.caption(f"POST to: https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/{file_id}/edit with season ID {season_id}")
-                        response_season = requests.post(
-                            f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/{file_id}/edit",
-                            headers=headers_season,
-                            cookies={"sdnSessionRemember": st.secrets["sdnSessionRemember"]},
-                            data=season_payload
-                        )
-                        response_season.raise_for_status()
-                        st.success("Season ✅")
-                    except requests.exceptions.RequestException as e:
-                        st.error(f"Season ❌ - {e}")
-                        if use_staging:
-                            st.text(f"Raw response: {response_season.text if 'response_season' in locals() else 'No response'}")
-                        errors += 1
+                    # try:
+                    #     season_payload = {
+                    #         "_method": "PATCH",
+                    #         "podcast_episode[Permalink]": "",
+                    #         "podcast_episode[Author]": "",
+                    #         "podcast_episode[Keywords]": "",
+                    #         "podcast_episode[EpisodeType]": "full",
+                    #         "podcast_episode[FeedGuid]": "",
+                    #         "podcast_episode[PodcastSeasons]": season_id
+                    #     }
+                    #     headers_season = {
+                    #         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                    #         "Origin": "https://sdn.3qsdn.com",  
+                    #         "Referer": f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode",
+                    #         "X-Requested-With": "XMLHttpRequest"
+                    #     }
+                    #     if use_staging:
+                    #         st.caption(f"POST to: https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/{file_id}/edit with season ID {season_id}")
+                    #     response_season = requests.post(
+                    #         f"https://sdn.3qsdn.com/de/podcast/{podcast_id}/episode/{file_id}/edit",
+                    #         headers=headers_season,
+                    #         cookies={"sdnSessionRemember": st.secrets["sdnSessionRemember"]},
+                    #         data=season_payload
+                    #     )
+                    #     response_season.raise_for_status()
+                    #     st.success("Season ✅")
+                    # except requests.exceptions.RequestException as e:
+                    #     st.error(f"Season ❌ - {e}")
+                    #     if use_staging:
+                    #         st.text(f"Raw response: {response_season.text if 'response_season' in locals() else 'No response'}")
+                    #     errors += 1
 
                     if article_id:
                         # This may overwrite the podcast cover set in step 3.4 if successful
@@ -184,5 +184,6 @@ if st.button("Start Processing"):
                                 st.error("No URL found in image API response.")
                         except requests.exceptions.RequestException as e:
                             st.error(f"Podcast Cover from article ❌ - {e}")
+                        st.success("DONE! ✅")
             else:
                 st.error("Something went wrong and I don't know what... Could you please check the File ID?")

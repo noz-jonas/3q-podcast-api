@@ -122,9 +122,9 @@ if st.button("Start Processing"):
                     try:
                         response_body = requests.put(body_url, headers={**headers, "Content-Type": "application/json"}, json=body_payload)
                         response_body.raise_for_status()
-                        st.success("Body Text ✅")
+                        st.success("Body Text & Subtitle ✅")
                     except requests.exceptions.RequestException as e:
-                        st.error(f"Body Text ❌ - {e}")
+                        st.error(f"Body Text & Subtitle ❌ - {e}")
                         errors += 1
 
                     if errors >= 2:

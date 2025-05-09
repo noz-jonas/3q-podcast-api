@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.4")
+st.caption("v1.9.5")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -110,8 +110,13 @@ if st.button("Start Processing"):
                         errors += 1
 
                     # 3.5 Set Body Text
-                    today = datetime.date.today()
-                    formatted_release_time = f"{today.strftime('%Y-%m-%d')} 07:00:00"
+                    from datetime import datetime, time
+                    import pytz
+
+                    berlin = pytz.timezone("Europe/Berlin")
+                    release_dt_local = berlin.localize(datetime.combine(datetime.today(), time(7, 0)))
+                    release_dt_utc = release_dt_local.astimezone(pytz.utc)
+                    formatted_release_time = release_dt_utc.strftime("%Y-%m-%d %H:%M:%S")
 
                     body_payload = {
                         "DisplayTitleSecondLine": "Fokus Schleswig-Holstein",

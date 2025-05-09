@@ -2,11 +2,13 @@
 import streamlit as st
 import requests
 import toml
+import datetime
+import pytz
 
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.8.1")
+st.caption("v1.9")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -108,7 +110,10 @@ if st.button("Start Processing"):
                         errors += 1
 
                     # 3.5 Set Body Text
-                    body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"
+                    berlin = pytz.timezone("Europe/Berlin")
+                    release_time = datetime.datetime.now(berlin).replace(hour=7, minute=0, second=0, microsecond=0)
+                    iso_release_time = release_time.isoformat()
+
                     body_payload = {
                         "DisplayTitleSecondLine": "Fokus Schleswig-Holstein",
                         "cf_Body": """
@@ -117,7 +122,8 @@ if st.button("Start Processing"):
                         <a href=\"mailto:audio@noz-digital.de\">audio@noz-digital.de</a>&nbsp;
                         oder nimm an unserer&nbsp;<strong>Umfrage zum Podcast</strong>&nbsp;teil:&nbsp;
                         <a href=\"https://de.research.net/r/fokus-sh\">https://de.research.net/r/fokus-sh</a>.</p>
-                        """
+                        """,
+                        "Metadata_IsPublicAt": iso_release_time
                     }
                     try:
                         response_body = requests.put(body_url, headers={**headers, "Content-Type": "application/json"}, json=body_payload)
@@ -183,6 +189,17 @@ if st.button("Start Processing"):
                                 st.error("No URL found in image API response.")
                         except requests.exceptions.RequestException as e:
                             st.error(f"Podcast Cover from article ❌ - {e}")
+
+                        # Set release status to published
+                        try:
+                            release_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}"
+                            release_payload = {"ReleaseStatus": "published"}
+                            response_release = requests.post(release_url, headers={**headers, "Content-Type": "application/json"}, json=release_payload)
+                            response_release.raise_for_status()
+                            st.success("Release status set to published ✅")
+                        except requests.exceptions.RequestException as e:
+                            st.error(f"Failed to set release status ❌ - {e}")
+
                         st.success("DONE! ✅")
             else:
                 st.error("Something went wrong and I don't know what... Could you please check the File ID?")

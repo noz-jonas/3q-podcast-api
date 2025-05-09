@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.1")
+st.caption("v1.9.2")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -110,9 +110,8 @@ if st.button("Start Processing"):
                         errors += 1
 
                     # 3.5 Set Body Text
-                    berlin = pytz.timezone("Europe/Berlin")
-                    release_time = datetime.datetime.now(berlin).replace(hour=7, minute=0, second=0, microsecond=0)
-                    iso_release_time = release_time.isoformat()
+                    release_time = datetime.datetime.now().replace(hour=7, minute=0, second=0, microsecond=0)
+                    formatted_release_time = release_time.strftime("%Y-%m-%d %H:%M:%S")
 
                     body_payload = {
                         "DisplayTitleSecondLine": "Fokus Schleswig-Holstein",
@@ -123,13 +122,13 @@ if st.button("Start Processing"):
                         oder nimm an unserer&nbsp;<strong>Umfrage zum Podcast</strong>&nbsp;teil:&nbsp;
                         <a href=\"https://de.research.net/r/fokus-sh\">https://de.research.net/r/fokus-sh</a>.</p>
                         """,
-                        "Metadata_IsPublicAt": iso_release_time
+                        "Metadata_IsPublicAt": formatted_release_time
                     }
                     try:
                         body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"
                         response_body = requests.put(body_url, headers={**headers, "Content-Type": "application/json"}, json=body_payload)
                         response_body.raise_for_status()
-                        st.success("Body Text & Subtitle ✅")
+                        st.success("Body Text, Subtitle and Release Date ✅")
                     except requests.exceptions.RequestException as e:
                         st.error(f"Body Text & Subtitle ❌ - {e}")
                         errors += 1
@@ -193,7 +192,7 @@ if st.button("Start Processing"):
 
                         # Set release status to published
                         try:
-                            release_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}"
+                            release_url = f"https://sdn.3qsdn.com/api/v2/project/{project_id}/files/{file_id}"
                             release_payload = {"ReleaseStatus": "published"}
                             response_release = requests.post(release_url, headers={**headers, "Content-Type": "application/json"}, json=release_payload)
                             response_release.raise_for_status()

@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.2")
+st.caption("v1.9.3")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -122,7 +122,7 @@ if st.button("Start Processing"):
                         oder nimm an unserer&nbsp;<strong>Umfrage zum Podcast</strong>&nbsp;teil:&nbsp;
                         <a href=\"https://de.research.net/r/fokus-sh\">https://de.research.net/r/fokus-sh</a>.</p>
                         """,
-                        "Metadata_IsPublicAt": formatted_release_time
+                        "IsPublicAt": formatted_release_time
                     }
                     try:
                         body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"

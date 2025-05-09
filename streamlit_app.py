@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9")
+st.caption("v1.9.1")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -126,6 +126,7 @@ if st.button("Start Processing"):
                         "Metadata_IsPublicAt": iso_release_time
                     }
                     try:
+                        body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"
                         response_body = requests.put(body_url, headers={**headers, "Content-Type": "application/json"}, json=body_payload)
                         response_body.raise_for_status()
                         st.success("Body Text & Subtitle ✅")

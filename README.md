@@ -17,6 +17,8 @@ This Streamlit app helps editors and producers easily assign podcast metadata us
   # Podcast season (via cookie-authenticated POST) -- removed, as setting season is deactivated
 - Default podcast cover image (Step 3.4)
 - 🆕 Fetch and upload cover image dynamically from `articleId` (Step 4)
+- Set scheduled release date at 7:00 a.m. Berlin time
+- Set release status to published after all processing steps
 - Error messages with detailed debugging in staging mode
 - Version info shown in the interface
 
@@ -80,9 +82,10 @@ Then open `http://localhost:8501` in your browser.
    - Adds the file to a podcast
    - Applies metadata
    - Uploads vertical image and body text
-   - Sets the podcast season
    - Uses a default cover image
   - Optionally replaces the cover with an article-based image (if found)
+  - Schedules the release date
+  - Publishes the file as the final step
   - Final success message when processing is complete
 
 ---

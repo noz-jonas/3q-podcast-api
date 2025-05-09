@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.3")
+st.caption("v1.9.4")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"
@@ -110,8 +110,8 @@ if st.button("Start Processing"):
                         errors += 1
 
                     # 3.5 Set Body Text
-                    release_time = datetime.datetime.now().replace(hour=7, minute=0, second=0, microsecond=0)
-                    formatted_release_time = release_time.strftime("%Y-%m-%d %H:%M:%S")
+                    today = datetime.date.today()
+                    formatted_release_time = f"{today.strftime('%Y-%m-%d')} 07:00:00"
 
                     body_payload = {
                         "DisplayTitleSecondLine": "Fokus Schleswig-Holstein",
@@ -128,9 +128,9 @@ if st.button("Start Processing"):
                         body_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata"
                         response_body = requests.put(body_url, headers={**headers, "Content-Type": "application/json"}, json=body_payload)
                         response_body.raise_for_status()
-                        st.success("Body Text, Subtitle and Release Date ✅")
+                        st.success("Body Text, Subtitle & Release Date ✅")
                     except requests.exceptions.RequestException as e:
-                        st.error(f"Body Text & Subtitle ❌ - {e}")
+                        st.error(f"Body Text, Subtitle & Release Date ❌ - {e}")
                         errors += 1
 
                     if errors >= 2:

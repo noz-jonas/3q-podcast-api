@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.5")
+st.caption("v1.9.6")
 use_staging = st.toggle("Use staging environment", value=False)
 
 env = "staging" if use_staging else "live"

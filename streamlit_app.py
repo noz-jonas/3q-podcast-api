@@ -58,8 +58,11 @@ if st.button("Start Processing"):
                 videotype_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/videotype/709"
                 try:
                     response_videotype = requests.patch(videotype_url, headers={**headers, "Content-Type": "application/json"})
-                    response_videotype.raise_for_status()
-                    st.success("Videotype ✅")
+                    if response_videotype.status_code == 409 and "Link already exists" in response_videotype.text:
+                        st.success("Videotype already set ✅")
+                    else:
+                        response_videotype.raise_for_status()
+                        st.success("Videotype ✅")
                 except requests.exceptions.RequestException as e:
                     st.error(f"Videotype ❌ - {e}")
                     errors += 1
@@ -68,8 +71,11 @@ if st.button("Start Processing"):
                 category_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/category/7453"
                 try:
                     response_category = requests.patch(category_url, headers={**headers, "Content-Type": "application/json"})
-                    response_category.raise_for_status()
-                    st.success("Category ✅")
+                    if response_category.status_code == 409 and "Link already exists" in response_category.text:
+                        st.success("Category already set ✅")
+                    else:
+                        response_category.raise_for_status()
+                        st.success("Category ✅")
                 except requests.exceptions.RequestException as e:
                     st.error(f"Category ❌ - {e}")
                     errors += 1

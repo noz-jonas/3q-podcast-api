@@ -6,7 +6,7 @@ This Streamlit app helps editors and producers easily assign podcast metadata us
 
 ## ✅ Features
 
-- Toggle between **Live** and **Staging** environments
+- Select between "Fokus Schleswig-Holstein" and "Fokus Husum" podcasts
 - Add a 3Q file to a podcast episode (3Q API)
 - Set metadata:
   - Videotype
@@ -46,14 +46,14 @@ Create a `.streamlit/secrets.toml` file with the following structure:
 # Live environment
 live_project_id = "..."
 live_api_key = "..."
-live_podcast_id = "..."
-live_season_id = "..."
+live_podcast_id_fokussh = "..."
+live_podcast_id_fokushusum = "..."
 
 # Staging environment
 staging_project_id = "..."
 staging_api_key = "..."
-staging_podcast_id = "..."
-staging_season_id = "..."
+staging_podcast_id_fokussh = "..."
+staging_podcast_id_fokushusum = "..."
 
 # Shared secrets
 sdnSessionRemember = "..."

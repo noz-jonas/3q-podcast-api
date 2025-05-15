@@ -8,13 +8,22 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.6")
+st.caption("v1.9.7")
 use_staging = st.toggle("Use staging environment", value=False)
 
+podcast_selection = st.selectbox("Select podcast", ["Fokus Schleswig-Holstein", "Fokus Husum"])
+
 env = "staging" if use_staging else "live"
-project_id = st.secrets[f"{env}_project_id"]
+if podcast_selection == "Fokus Schleswig-Holstein":
+    podcast_id = st.secrets[f"{env}_podcast_id_fokussh"]
+    category_id = "7453"
+    videotype_id = "709"
+else:  # Fokus Husum
+    podcast_id = st.secrets[f"{env}_podcast_id_fokushusum"]
+    category_id = "7593"
+    videotype_id = "805"
+
 api_key = st.secrets[f"{env}_api_key"]
-podcast_id = st.secrets[f"{env}_podcast_id"]
 season_id = st.secrets[f"{env}_season_id"]
 
 st.divider()
@@ -55,7 +64,7 @@ if st.button("Start Processing"):
                 # API calls sequence
 
                 # 3.1 Set Videotype
-                videotype_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/videotype/709"
+                videotype_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/videotype/{videotype_id}"
                 try:
                     response_videotype = requests.patch(videotype_url, headers={**headers, "Content-Type": "application/json"})
                     if response_videotype.status_code == 409 and "Link already exists" in response_videotype.text:
@@ -68,7 +77,7 @@ if st.button("Start Processing"):
                     errors += 1
 
                 # 3.2 Set Category
-                category_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/category/7453"
+                category_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/category/{category_id}"
                 try:
                     response_category = requests.patch(category_url, headers={**headers, "Content-Type": "application/json"})
                     if response_category.status_code == 409 and "Link already exists" in response_category.text:

@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.9")
+st.caption("v1.9.10")
 use_staging = st.toggle("Use staging environment", value=False)
 
 podcast_selection = st.selectbox("Select podcast", ["Fokus Schleswig-Holstein", "Fokus Husum"])
@@ -124,7 +124,10 @@ if st.button("Start Processing"):
                     st.error("Something went wrong. Please check the fileId or ask the product manager.")
                 else:
                     # 3.3 Set Vertical Image
-                    image_url_vertical = f"https://sdn-global-prog-cache.3qsdn.com/12394/files/25/04/23/11438305/759401e4-e413-4f74-8fa6-d59c8dd37234.jpg"
+                    if podcast_selection == "Fokus Schleswig-Holstein":
+                        image_url_vertical = f"https://sdn-global-prog-cache.3qsdn.com/12394/files/25/04/23/11438305/759401e4-e413-4f74-8fa6-d59c8dd37234.jpg"
+                    else:
+                        image_url_vertical = "https://sdn-global-prog-cache.3qsdn.com/12394/files/25/05/15/11506125/81053dd2-1564-4fdb-953d-9913c49f512c.jpg"
                     try:
                         img_data_vertical = requests.get(image_url_vertical).content
 
@@ -140,7 +143,10 @@ if st.button("Start Processing"):
                         errors += 1
 
                     # 3.4 Set Podcast Cover
-                    image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/3d941bd8-6020-4234-9469-d2245fa5ae0c.jpg"
+                    if podcast_selection == "Fokus Schleswig-Holstein":
+                        image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/3d941bd8-6020-4234-9469-d2245fa5ae0c.jpg"
+                    else:
+                        image_url_cover = "https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/e52765d5-68b8-4777-be48-dbc654f9d3c6.jpg"
                     try:
                         img_data_cover = requests.get(image_url_cover).content
 
@@ -171,12 +177,12 @@ if st.button("Start Processing"):
                     body_payload = {
                         "DisplayTitleSecondLine": "Fokus Schleswig-Holstein" if podcast_selection == "Fokus Schleswig-Holstein" else "Fokus Husum",
                         "cf_Body": """
-                        <h1>Du hast Feedback zum neuen Format?</h1>
-                        <p>Dann&nbsp;<strong>schreib uns gerne eine E-Mail</strong>&nbsp;an&nbsp;
-                        <a href=\"mailto:audio@noz-digital.de\">audio@noz-digital.de</a>&nbsp;
-                        oder nimm an unserer&nbsp;<strong>Umfrage zum Podcast</strong>&nbsp;teil:&nbsp;
-                        <a href=\"https://de.research.net/r/fokus-sh\">https://de.research.net/r/fokus-sh</a>.</p>
-                        """,
+                            <h1>Du hast Feedback zum neuen Format?</h1>
+                            <p>Dann&nbsp;<strong>schreib uns gerne eine E-Mail</strong>&nbsp;an&nbsp;
+                            <a href=\"mailto:audio@noz-digital.de\">audio@noz-digital.de</a>&nbsp;
+                            oder nimm an unserer&nbsp;<strong>Umfrage zum Podcast</strong>&nbsp;teil:&nbsp;
+                            <a href=\"https://de.research.net/r/fokus-sh\">https://de.research.net/r/fokus-sh</a>.</p>
+                            """ if podcast_selection == "Fokus Schleswig-Holstein" else "",
                         "IsPublicAt": formatted_release_time
                     }
                     try:

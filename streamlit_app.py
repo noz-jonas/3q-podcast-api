@@ -8,12 +8,13 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.7")
+st.caption("v1.9.8")
 use_staging = st.toggle("Use staging environment", value=False)
 
 podcast_selection = st.selectbox("Select podcast", ["Fokus Schleswig-Holstein", "Fokus Husum"])
 
 env = "staging" if use_staging else "live"
+project_id = st.secrets[f"{env}_project_id"]
 if podcast_selection == "Fokus Schleswig-Holstein":
     podcast_id = st.secrets[f"{env}_podcast_id_fokussh"]
     category_id = "7453"

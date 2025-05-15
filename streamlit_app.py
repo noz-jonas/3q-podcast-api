@@ -8,12 +8,29 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.8")
+st.caption("v1.9.9")
 use_staging = st.toggle("Use staging environment", value=False)
 
 podcast_selection = st.selectbox("Select podcast", ["Fokus Schleswig-Holstein", "Fokus Husum"])
 
 env = "staging" if use_staging else "live"
+
+# Preflight check for required secrets
+required_keys = [
+    f"{env}_project_id",
+    f"{env}_api_key",
+    f"{env}_podcast_id_fokussh",
+    f"{env}_podcast_id_fokushusum",
+    "sdnSessionRemember",
+    "imgaccess_token",
+    "image_clientId_token"
+]
+
+missing_keys = [key for key in required_keys if key not in st.secrets]
+if missing_keys:
+    st.error(f"Missing required configuration keys: {', '.join(missing_keys)}. Please update your secrets.toml.")
+    st.stop()
+
 project_id = st.secrets[f"{env}_project_id"]
 if podcast_selection == "Fokus Schleswig-Holstein":
     podcast_id = st.secrets[f"{env}_podcast_id_fokussh"]
@@ -65,6 +82,19 @@ if st.button("Start Processing"):
                 # API calls sequence
 
                 # 3.1 Set Videotype
+                # Set generic podcast Videotype (ID 200)
+                videotype_url_base = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/videotype"
+                try:
+                    response_videotype_generic = requests.patch(f"{videotype_url_base}/200", headers={**headers, "Content-Type": "application/json"})
+                    if response_videotype_generic.status_code == 409 and "Link already exists" in response_videotype_generic.text:
+                        st.success("Generic Podcast Videotype already set ✅")
+                    else:
+                        response_videotype_generic.raise_for_status()
+                        st.success("Generic Podcast Videotype ✅")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Generic Podcast Videotype ❌ - {e}")
+                    errors += 1
+
                 videotype_url = f"https://sdn.3qsdn.com/api/v2/projects/{project_id}/files/{file_id}/metadata/videotype/{videotype_id}"
                 try:
                     response_videotype = requests.patch(videotype_url, headers={**headers, "Content-Type": "application/json"})
@@ -110,7 +140,7 @@ if st.button("Start Processing"):
                         errors += 1
 
                     # 3.4 Set Podcast Cover
-                    image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/cae358de-89ff-4067-aee6-e79613779d74.jpg"
+                    image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/3d941bd8-6020-4234-9469-d2245fa5ae0c.jpg"
                     try:
                         img_data_cover = requests.get(image_url_cover).content
 
@@ -130,12 +160,16 @@ if st.button("Start Processing"):
                     import pytz
 
                     berlin = pytz.timezone("Europe/Berlin")
-                    release_dt_local = berlin.localize(datetime.combine(datetime.today(), time(7, 0)))
+                    if podcast_selection == "Fokus Schleswig-Holstein":
+                        release_time = time(7, 0)
+                    else:
+                        release_time = time(16, 0)
+                    release_dt_local = berlin.localize(datetime.combine(datetime.today(), release_time))
                     release_dt_utc = release_dt_local.astimezone(pytz.utc)
                     formatted_release_time = release_dt_utc.strftime("%Y-%m-%d %H:%M:%S")
 
                     body_payload = {
-                        "DisplayTitleSecondLine": "Fokus Schleswig-Holstein",
+                        "DisplayTitleSecondLine": "Fokus Schleswig-Holstein" if podcast_selection == "Fokus Schleswig-Holstein" else "Fokus Husum",
                         "cf_Body": """
                         <h1>Du hast Feedback zum neuen Format?</h1>
                         <p>Dann&nbsp;<strong>schreib uns gerne eine E-Mail</strong>&nbsp;an&nbsp;

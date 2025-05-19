@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v1.9.10")
+st.caption("v2.0.0")
 use_staging = st.toggle("Use staging environment", value=False)
 
 podcast_selection = st.selectbox("Select podcast", ["Fokus Schleswig-Holstein", "Fokus Husum"])
@@ -260,6 +260,41 @@ if st.button("Start Processing"):
                             st.success("Release status set to published ✅")
                         except requests.exceptions.RequestException as e:
                             st.error(f"Failed to set release status ❌ - {e}")
+
+                        # Send push notification via CleverPush
+                        try:
+                            if use_staging:
+                                push_api_key = st.secrets["staging_cleverpush_api_key"]
+                                push_channel_id = st.secrets["staging_cleverpush_channel_id"]
+                                push_segment_id = st.secrets["staging_cleverpush_segment_id"]
+                            else:
+                                push_api_key = st.secrets["live_cleverpush_api_key"]
+                                if podcast_selection == "Fokus Schleswig-Holstein":
+                                    push_channel_id = st.secrets["live_cleverpush_channel_id_fokussh"]
+                                    push_segment_id = st.secrets["live_cleverpush_segment_id_fokussh"]
+                                else:
+                                    push_channel_id = st.secrets["live_cleverpush_channel_id_fokushusum"]
+                                    push_segment_id = st.secrets["live_cleverpush_segment_id_fokushusum"]
+
+                            push_url = "https://api.cleverpush.com/notification/send"
+                            push_headers = {
+                                "Authorization": push_api_key,
+                                "Content-Type": "application/json"
+                            }
+                            push_payload = {
+                                "channelId": push_channel_id,
+                                "title": "News-Podcast",
+                                "text": "Informiere Dich zu den wichtigsten Schleswig-Holstein Themen in 5 Minuten!",
+                                "url": "https://www.shz.de/audiothek/fokus-sh",
+                                "segments": [push_segment_id],
+                                "mediaUrl": "https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/3d941bd8-6020-4234-9469-d2245fa5ae0c.jpg"
+                            }
+
+                            response_push = requests.post(push_url, headers=push_headers, json=push_payload)
+                            response_push.raise_for_status()
+                            st.success("Push Notification sent ✅")
+                        except requests.exceptions.RequestException as e:
+                            st.error(f"Push Notification ❌ - {e}")
 
                         st.success("DONE! ✅")
             else:

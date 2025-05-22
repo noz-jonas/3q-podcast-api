@@ -8,7 +8,7 @@ import pytz
 # Streamlit UI
 st.title("Podcast Management")
 
-st.caption("v2.0.1")
+st.caption("v2.0.2")
 use_staging = st.toggle("Use staging environment", value=False)
 
 podcast_selection = st.selectbox("Select podcast", ["Fokus Schleswig-Holstein", "Fokus Husum"])
@@ -146,7 +146,7 @@ if st.button("Start Processing"):
                     if podcast_selection == "Fokus Schleswig-Holstein":
                         image_url_cover = f"https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/3d941bd8-6020-4234-9469-d2245fa5ae0c.jpg"
                     else:
-                        image_url_cover = "https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/e52765d5-68b8-4777-be48-dbc654f9d3c6.jpg"
+                        image_url_cover = "https://sdn-global-prog-cache.3qsdn.com/uploads/252/podcast/63ff7efd-7c0c-43b7-a309-cf51d27e5856.jpg"
                     try:
                         img_data_cover = requests.get(image_url_cover).content
 
@@ -175,14 +175,9 @@ if st.button("Start Processing"):
                     formatted_release_time = release_dt_utc.strftime("%Y-%m-%d %H:%M:%S")
 
                     body_payload = {
-                        "DisplayTitleSecondLine": "Fokus Schleswig-Holstein" if podcast_selection == "Fokus Schleswig-Holstein" else "Fokus Husum",
-                        "cf_Body": """
-                            <h1>Du hast Feedback zum neuen Format?</h1>
-                            <p>Dann&nbsp;<strong>schreib uns gerne eine E-Mail</strong>&nbsp;an&nbsp;
-                            <a href=\"mailto:audio@noz-digital.de\">audio@noz-digital.de</a>&nbsp;
-                            oder nimm an unserer&nbsp;<strong>Umfrage zum Podcast</strong>&nbsp;teil:&nbsp;
-                            <a href=\"https://de.research.net/r/fokus-sh\">https://de.research.net/r/fokus-sh</a>.</p>
-                            """ if podcast_selection == "Fokus Schleswig-Holstein" else "",
+                        "DisplayTitleSecondLine": "Fokus Schleswig-Holstein" if podcast_selection == "Fokus Schleswig-Holstein" else "Rund um Husum – in 5 Minuten",
+                        "cf_Body": ""
+                            "" if podcast_selection == "Fokus Schleswig-Holstein" else "",
                         "IsPublicAt": formatted_release_time
                     }
                     try:
